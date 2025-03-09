@@ -30,8 +30,7 @@ const Search = () => {
                       rounded-md
                       bg-white'
       >
-        <h1 className='my-5 text-2xl font-bold'>User Registration</h1>
-        <h3>Registration Number</h3>
+        <h3>Enter student id here:</h3>
         <div className='flex space-x-3'>
             <input 
               type="text"
