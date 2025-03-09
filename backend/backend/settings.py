@@ -67,6 +67,12 @@ CORS_ALLOW_METHODS = [  # Allow specific HTTP methods
     "OPTIONS",
 ]
 
+ALLOWED_HOSTS = [
+    "g-score-7k0m.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
+
 CORS_ALLOW_HEADERS = [  # Allow specific headers
     "authorization",
     "content-type",
