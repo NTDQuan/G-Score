@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_API_URL = 'http://127.0.0.1:8000/score';
+const BASE_API_URL = import.meta.env.VITE_API_URL;
 
 const searchRecordWithId = async (id) => {
   try {
@@ -27,6 +27,7 @@ const getStatisticBySubject = async (subject) => {
 const getATopStudent = async () => {
   try {
     const response = await axios.get(`${BASE_API_URL}/get_a_top_student`);
+    console.log(`${BASE_API_URL}/get_a_top_student`)
     return response.data;
   } catch (error) {
     console.error('Error:', error);
