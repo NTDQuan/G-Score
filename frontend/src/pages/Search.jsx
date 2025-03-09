@@ -6,8 +6,10 @@ const Search = () => {
   const [registrationId, setRegistrationId] = useState('')
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSearch = async () => {
+    setIsLoading(true)
     try {
       setError(null)
       const result = await APIService.searchRecordWithId(registrationId);
@@ -15,6 +17,8 @@ const Search = () => {
     } catch (err) {
       setError('No record found');
       setData(null);
+    } finally {
+      setIsLoading(false)
     }
   } 
 
@@ -44,6 +48,7 @@ const Search = () => {
               '
               value={registrationId}
               onChange={(e) => setRegistrationId(e.target.value)}
+              disabled={isLoading}
               placeholder='Enter registration number'
             ></input>
             <button 
@@ -58,8 +63,9 @@ const Search = () => {
                 text-white
                 cursor-pointer
               '
+              disabled={isLoading}
             >
-              Submit
+              {isLoading ? 'Loading...' : 'Submit'}
             </button>
         </div>
         {error && <p className="text-red-500 mt-2">{error}</p>}
