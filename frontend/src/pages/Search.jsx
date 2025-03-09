@@ -9,7 +9,7 @@ const Search = () => {
 
   const handleSearch = async () => {
     try {
-      setError('');
+      setError(null)
       const result = await APIService.searchRecordWithId(registrationId);
       setData([result]);
     } catch (err) {
@@ -20,14 +20,15 @@ const Search = () => {
 
 
   return (
-    <div className='flex flex-col min-h-screen p-6 bg-gray-50'>
+    <div className='flex flex-col min-h-screen p-6 bg-gray-100 space-y-6'>
       <h1 className="text-2xl font-bold mb-5 text-center sm:text-left">Search</h1>
       <div className='shadow-[1px_1px_3px_3px_rgba(0,0,0,0.05)] 
                       p-5 
                       w-full 
                       border 
                       border-hidden 
-                      rounded-md'
+                      rounded-md
+                      bg-white'
       >
         <h1 className='my-5 text-2xl font-bold'>User Registration</h1>
         <h3>Registration Number</h3>
@@ -62,16 +63,17 @@ const Search = () => {
               Submit
             </button>
         </div>
+        {error && <p className="text-red-500 mt-2">{error}</p>}
       </div>
       <div className='shadow-[1px_1px_3px_3px_rgba(0,0,0,0.05)] 
                       p-5 
                       w-full 
                       border 
                       border-hidden 
-                      rounded-md'
+                      rounded-md
+                      bg-white'
       >
         <h1 className='my-5 text-2xl font-bold'>Detail Score</h1>
-        <h3>Registration Number</h3>
 
         <div className='flex-1 overflow-auto h-full'>
           <Table data={data}/>

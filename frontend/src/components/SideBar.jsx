@@ -24,9 +24,10 @@ const SideBar = () => {
   }
 
   return (
-    <div className='w-16 md:w-56 fixed left-0 top-0 z-10 h-screen border-r pt-8 px-4 bg-white'>
+    <div className='w-16 md:w-56 fixed left-0 top-0 z-10 h-screen pt-8 px-4 bg-white'>
       <div>
-
+        <h1 className="text-2xl font-bold text-gray-500 md:block hidden">G-Score</h1>
+        <h1 className="text-2xl font-bold text-gray-500 md:hidden block">G</h1>
       </div>
       <ul className='mt-6 space-y-6'>
         {SIDEBAR_LINK.map((link) => (
