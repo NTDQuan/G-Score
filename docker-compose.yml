@@ -3,12 +3,11 @@ services:
     image: mysql:8.0
     container_name: mysql_db
     restart: always
-    env_file: .env
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: quanhtht123
+      MYSQL_DATABASE: g_score
+      MYSQL_USER: quanhtht
+      MYSQL_PASSWORD: quanhtht123
     ports:
       - "3307:3306"
     volumes:
@@ -28,11 +27,11 @@ services:
         condition: service_healthy
     env_file: .env
     environment:
-      DB_HOST: ${DB_HOST}
+      DB_HOST: db
       DB_PORT: 3306
-      DB_NAME: ${MYSQL_DATABASE}
-      DB_USER: ${MYSQL_USER}
-      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: g_score
+      DB_USER: quanhtht
+      DB_PASSWORD: quanhtht123
     ports:
       - "8000:8000"
     volumes:
@@ -56,6 +55,9 @@ services:
       - /app/node_modules
     stdin_open: true
     tty: true
+    environment:
+      VITE_API_URL: http://localhost:8000/score
+      VITE_MODE: development
 
 volumes:
  mysql_data:
