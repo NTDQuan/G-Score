@@ -34,7 +34,7 @@ Step 2: Change the autocrlf setting
 Step 3: Open cmd and use
 ``` docker compose up ```
 
-Step 3: Go to http://localhost:5173/
+Step 3: Go to http://localhost:5173/ or check the log for the localhost link
 
 > [!IMPORTANT]
 > The process might take a while to create the container and after that it need a couple minutes (~2 minutes) to seed the data (check the log for the progress)
