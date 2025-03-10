@@ -23,6 +23,8 @@ Step 2: Change the autocrlf setting
 
 ``` cd G-Score ```
 
+``` git config core.autocrlf false ```
+
 ``` git rm --cached -r . ``` # Don’t forget the dot at the end
 
 ``` git reset --hard ```
