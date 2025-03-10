@@ -14,23 +14,23 @@ You need to have docker installed
 
 Step 1: Clone the project
 
-> git clone git@github.com:NTDQuan/G-Score.git
+``` git clone git@github.com:NTDQuan/G-Score.git ```
 
 Step 2: Change the autocrlf setting
 
 > [!IMPORTANT]
 > Need to do this because github auto convert all the endline to CRLF (window format) which can screw the .sh file in backend so we need to change it back to LF.
 
-> cd G-Score
+``` cd G-Score ```
 
-> git rm --cached -r .             # Don’t forget the dot at the end
+``` git rm --cached -r . ``` # Don’t forget the dot at the end
 
-> git reset --hard
+``` git reset --hard ```
 
-> git status
+``` git status ```
 
 Step 3: Open cmd and use
-> docker compose up
+``` docker compose up ```
 
 Step 3: Go to http://localhost:5173/
 
