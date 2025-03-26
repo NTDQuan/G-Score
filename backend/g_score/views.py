@@ -1,57 +1,77 @@
-from django.db.models import ExpressionWrapper, F, FloatField
-from django.shortcuts import render
-from rest_framework import viewsets
+from django.db.models import ExpressionWrapper, F, FloatField, Sum, Q, Prefetch, Count
+from django.shortcuts import render, get_object_or_404
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
-from .models import ScoreModel
-from .serializers import ScoreSerializer
+from .models import ScoreModel, Subject, Score, Student, ForeignLanguage
+from .serializers import ScoreSerializer, StudentSerializer, ForeignLanguageSerializer, SubjectSerializer
 
 
-# Create your views here.
 class ScoreViewSet(viewsets.ModelViewSet):
-    queryset = ScoreModel.objects.all()
+    queryset = Score.objects.all()
     serializer_class = ScoreSerializer
 
     @action(detail=False, methods=['get'])
     def get_statistic(self, request):
-        subject = request.GET.get('subject', None)
+        subject_id = request.GET.get('subject')
 
-        if not subject:
-            return Response({"error": "Missing subject parameter"}, status = 400)
+        if not subject_id:
+            return Response({"error": "Missing subject parameter"}, status=status.HTTP_400_BAD_REQUEST)
 
-        valid_subjects = [
-            "math", "literature", "physics", "foreign_language",
-            "chemistry", "biology", "history", "geography", "civic_education"
-        ]
+        try:
+            subject_id = int(subject_id)
+            subject = Subject.objects.get(id=subject_id)
+        except (ValueError, Subject.DoesNotExist):
+            return Response({"error": "Invalid subject ID"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if subject not in valid_subjects:
-            return Response({"error": "Invalid subject name"}, status=400)
+        statistics = Score.objects.filter(subject=subject).aggregate(
+            lv4=Count("id", filter=Q(score__gte=8)),
+            lv3=Count("id", filter=Q(score__gte=6, score__lt=8)),
+            lv2=Count("id", filter=Q(score__gte=4, score__lt=6)),
+            lv1=Count("id", filter=Q(score__lt=4))
+        )
 
         return Response({
-            "subject": subject,
-            "lv4": ScoreModel.objects.filter(**{f"{subject}__gte": 8}).count(),
-            "lv3": ScoreModel.objects.filter(**{f"{subject}__lt": 8, f"{subject}__gte": 6}).count(),
-            "lv2": ScoreModel.objects.filter(**{f"{subject}__lt": 6, f"{subject}__gte": 4}).count(),
-            "lv1": ScoreModel.objects.filter(**{f"{subject}__lt": 4}).count(),
-        })
+            "subject": subject_id,
+            **statistics
+        }, status=status.HTTP_200_OK)
+
+class SubjectViewSet(viewsets.ModelViewSet):
+    queryset = Subject.objects.all()
+    serializer_class = SubjectSerializer
+
+class StudentViewSet(viewsets.ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    lookup_field = 'student_id'
+
+    def get(self, request, *arg, **kwargs):
+        try:
+            student = self.get_object()
+            serializer = StudentSerializer(student)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Student.DoesNotExist:
+            return Response({"error": "Student not found"}, status=status.HTTP_404_NOT_FOUND)
+
 
     @action(detail=False, methods=['get'])
     def get_a_top_student(self, request):
-        group_a_students = ScoreModel.objects.filter(
-            math__isnull=False,
-            physics__isnull=False,
-            chemistry__isnull=False,
-        )
-
-        group_a_students = group_a_students.annotate(
-            total_score=ExpressionWrapper(
-                F('math') + F('physics') + F('chemistry'),
+        group_a_students = Student.objects.annotate(
+            total_score=Sum(
+                F('scores__score'),
+                filter=Q(scores__subject__subject__in=["toan", "vat_li", "hoa_hoc"]),
                 output_field=FloatField()
             )
-        )
+        ).filter(total_score__isnull=False).order_by('-total_score')[:10]
 
-        top_10_students = group_a_students.order_by('-total_score')[:10]
+        if not group_a_students:
+            return ({"message": "No students found"}, status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(top_10_students, many=True)
-        return Response(serializer.data)
+        serializer = StudentSerializer(group_a_students, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+

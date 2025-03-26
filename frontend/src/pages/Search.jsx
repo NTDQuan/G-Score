@@ -7,6 +7,21 @@ const Search = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false)
+  const [subjects, setSubjects] = useState([]);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const response = await APIService.getAllSubject();
+        setSubjects(response);
+      } catch (e) {
+        console.error("Error fetching subjects:", e);
+        setSubjects([]);
+      }
+    };
+
+    fetchSubjects();
+  }, []);
 
   const handleSearch = async () => {
     setIsLoading(true)
@@ -81,7 +96,7 @@ const Search = () => {
         <h1 className='my-5 text-2xl font-bold'>Detail Score</h1>
 
         <div className='flex-1 overflow-auto h-full'>
-          <Table data={data}/>
+          <Table data={data} subjects={subjects}/>
         </div>
       </div>
     </div>

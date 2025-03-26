@@ -1,9 +1,17 @@
 import React from 'react';
+import SUBJECT_LIST from '../data/Subject';
 
-const Table = ({ data }) => {
+const Table = ({ data, subjects }) => {
   if (!data || data.length === 0) {
     return <p className="text-center text-gray-500">No data available</p>;
   }
+
+  if (!subjects || subjects.length === 0) {
+    subjects = [
+      ...new Set(data.flatMap((student) => student.scores.map((s) => s.subject.subject))),
+    ];
+  }
+  console.log(subjects)
 
   return (
     <div className="w-full">
@@ -11,34 +19,33 @@ const Table = ({ data }) => {
         <thead>
           <tr className="bg-[#F5F5F5]">
             <th className="p-3 border">Id</th>
-            <th className="p-3 border">Math</th>
-            <th className="p-3 border">Literature</th>
-            <th className="p-3 border">Physics</th>
-            <th className="p-3 border">Foreign Language</th>
-            <th className="p-3 border">Chemistry</th>
-            <th className="p-3 border">Biology</th>
-            <th className="p-3 border">History</th>
-            <th className="p-3 border">Geography</th>
-            <th className="p-3 border">Civic Education</th>
+            {subjects.map((subject) => (
+              <th className="p-3 border" key={subject.subject}>
+                {SUBJECT_LIST[subject.subject] || subject.subject.replace("_", " ").toUpperCase()}
+              </th>
+            ))}
             <th className="p-3 border">FLC</th>
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
-            <tr key={item.id}>
-              <td className="p-3 border">{item.id}</td>
-              <td className="p-3 border">{item.math ?? "N/A"}</td>
-              <td className="p-3 border">{item.literature ?? "N/A"}</td>
-              <td className="p-3 border">{item.physics ?? "N/A"}</td>
-              <td className="p-3 border">{item.foreign_language ?? "N/A"}</td>
-              <td className="p-3 border">{item.chemistry ?? "N/A"}</td>
-              <td className="p-3 border">{item.biology ?? "N/A"}</td>
-              <td className="p-3 border">{item.history ?? "N/A"}</td>
-              <td className="p-3 border">{item.geography ?? "N/A"}</td>
-              <td className="p-3 border">{item.civic_education ?? "N/A"}</td>
-              <td className="p-3 border">{item.foreign_language_code ?? "N/A"}</td>
-            </tr>
-          ))}
+          {data.map((student) => {
+            const scoresMap = Object.fromEntries(
+              student.scores.map((s) => [s.subject.subject, s.score])
+            );
+            console.log(scoresMap)
+
+            return (
+              <tr key={student.student_id}>
+                <td className="p-3 border">{student.student_id}</td>
+                {subjects.map((subject) => (
+                  <td className="p-3 border" key={subject.subject}> 
+                    {scoresMap[subject.subject] !== undefined ? scoresMap[subject.subject] : ""}
+                  </td>
+                ))}
+                <td className="p-3 border">{student.language.language ?? "N/A"}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

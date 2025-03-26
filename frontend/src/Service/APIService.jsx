@@ -1,10 +1,11 @@
 import axios from 'axios';
 
 const BASE_API_URL = import.meta.env.VITE_API_URL;
+console.log('API URL:', BASE_API_URL);
 
 const searchRecordWithId = async (id) => {
   try {
-    const response = await axios.get(`${BASE_API_URL}/${id}`);
+    const response = await axios.get(`${BASE_API_URL}/student/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error:', error);
@@ -14,7 +15,7 @@ const searchRecordWithId = async (id) => {
 
 const getStatisticBySubject = async (subject) => {
   try {
-    const response = await axios.get(`${BASE_API_URL}/get_statistic`, {
+    const response = await axios.get(`${BASE_API_URL}/score/get_statistic`, {
         params: { subject }
     });
     return response.data;
@@ -26,7 +27,7 @@ const getStatisticBySubject = async (subject) => {
 
 const getATopStudent = async () => {
   try {
-    const response = await axios.get(`${BASE_API_URL}/get_a_top_student`);
+    const response = await axios.get(`${BASE_API_URL}/student/get_a_top_student`);
     console.log(`${BASE_API_URL}/get_a_top_student`)
     return response.data;
   } catch (error) {
@@ -35,4 +36,16 @@ const getATopStudent = async () => {
   }
 };
 
-export default { searchRecordWithId, getStatisticBySubject, getATopStudent };
+const getAllSubject = async () => {
+  try {
+    const response = await axios.get(`${BASE_API_URL}/subject`);
+    console.log(`${BASE_API_URL}/subject`)
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error
+  }
+}
+
+export default { searchRecordWithId, getStatisticBySubject, getATopStudent, getAllSubject };
