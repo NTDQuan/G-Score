@@ -11,7 +11,6 @@ const Table = ({ data, subjects }) => {
       ...new Set(data.flatMap((student) => student.scores.map((s) => s.subject.subject))),
     ];
   }
-  console.log(subjects)
 
   return (
     <div className="w-full">
