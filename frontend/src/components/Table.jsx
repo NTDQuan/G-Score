@@ -42,7 +42,7 @@ const Table = ({ data, subjects }) => {
                     {scoresMap[subject.subject] !== undefined ? scoresMap[subject.subject] : ""}
                   </td>
                 ))}
-                <td className="p-3 border">{student.language.language ?? "N/A"}</td>
+                <td className="p-3 border">{student.language?.language ?? ""}</td>
               </tr>
             );
           })}

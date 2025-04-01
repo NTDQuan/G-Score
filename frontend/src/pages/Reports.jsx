@@ -58,6 +58,7 @@ const Reports = () => {
       try {
         const response = await APIService.getATopStudent();
         setTopStudentData(response);
+        console.log(response)
       } catch (e) {
         console.error("Error fetching top students:", e);
         setTopStudentsError("Failed to load top students. Please try again later.");

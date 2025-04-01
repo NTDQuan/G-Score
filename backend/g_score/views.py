@@ -52,10 +52,10 @@ class StudentViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def get_a_top_student(self, request):
-        subject_list = ["toan", "vat_li", "hoa_hoc"]
-        subject_objects = Subject.objects.filter(subject__in=subject_list)
+        subject_list = ["toan", "hoa_hoc", "vat_ly"]
+        subject_ids = Subject.objects.filter(subject__in=subject_list).values_list('id')
 
-        group_a_students = Student.objects.get_top_students(subject_objects, 10)
+        group_a_students = Student.objects.get_top_students(subject_ids, 10)
 
         if not group_a_students:
             return ({"message": "No students found"}, status.HTTP_404_NOT_FOUND)
