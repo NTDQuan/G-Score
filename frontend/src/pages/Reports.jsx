@@ -79,11 +79,14 @@ const Reports = () => {
           <label className="text-lg font-semibold mb-2">Choose a subject:</label>
           <select
             className="p-2 border rounded-md mb-5 w-full md:w-1/2"
-            value={selectedSubject}
-            onChange={(e) => setSelectedSubject(e.target.value)}
+            value={selectedSubject ? selectedSubject.id : ""}
+            onChange={(e) => {
+              const subject = subjects.find((subject) => subject.id === parseInt(e.target.value));
+              setSelectedSubject(subject);
+            }}
           >
             {subjects.map((subject) => (
-              <option key={subject.id} value={subject.subject}>
+              <option key={subject.id} value={subject.id}>
                 {SUBJECT_LIST[subject.subject] || subject.subject.replace("_", " ").toUpperCase()}
               </option>
             ))}

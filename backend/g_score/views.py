@@ -22,16 +22,10 @@ class ScoreViewSet(viewsets.ModelViewSet):
 
         try:
             subject_id = int(subject_id)
-            subject = Subject.objects.get(id=subject_id)
         except (ValueError, Subject.DoesNotExist):
             return Response({"error": "Invalid subject ID"}, status=status.HTTP_400_BAD_REQUEST)
 
-        statistics = Score.objects.filter(subject=subject).aggregate(
-            lv4=Count("id", filter=Q(score__gte=8)),
-            lv3=Count("id", filter=Q(score__gte=6, score__lt=8)),
-            lv2=Count("id", filter=Q(score__gte=4, score__lt=6)),
-            lv1=Count("id", filter=Q(score__lt=4))
-        )
+        statistics = Subject.objects.get_score_statistics(subject_id)
 
         return Response({
             "subject": subject_id,
@@ -58,13 +52,10 @@ class StudentViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def get_a_top_student(self, request):
-        group_a_students = Student.objects.annotate(
-            total_score=Sum(
-                F('scores__score'),
-                filter=Q(scores__subject__subject__in=["toan", "vat_li", "hoa_hoc"]),
-                output_field=FloatField()
-            )
-        ).filter(total_score__isnull=False).order_by('-total_score')[:10]
+        subject_list = ["toan", "vat_li", "hoa_hoc"]
+        subject_objects = Subject.objects.filter(subject__in=subject_list)
+
+        group_a_students = Student.objects.get_top_students(subject_objects, 10)
 
         if not group_a_students:
             return ({"message": "No students found"}, status.HTTP_404_NOT_FOUND)
